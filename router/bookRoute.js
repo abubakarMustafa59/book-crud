@@ -1,7 +1,5 @@
 import express from 'express';
 import bookModel from '../Model/bookModel.js';
-import mongoose from 'mongoose'
-import upload from "../Multer/Multer.js"
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -35,28 +33,30 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.post('/', upload.single("image"), async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        console.log("first", req.status)
-        if (req.file) {
-            const { name, age, status } = req.body;
-            req.file.path = req.file.path.replace(`\\`, `/`);
-            const file = {
-                image: req.file.path,
-            };
-            const newData = new bookModel({
-                name: name,
-                age: age,
-                image: file.image,
-                status: status
-            })
-            console.log(newData)
-            const newModel = await bookModel.create(newData)
-            res.send(newModel)
-        }
-        else {
-            res.send("Image is required")
-        }
+        console.log("first", req.body)
+        const book=await bookModel.create(req.body)
+        res.send({book})
+        // if (req.file) {
+        //     const { name, age, status } = req.body;
+        //     req.file.path = req.file.path.replace(`\\`, `/`);
+        //     const file = {
+        //         image: req.file.path,
+        //     };
+        //     const newData = new bookModel({
+        //         name: name,
+        //         age: age,
+        //         image: file.image,
+        //         status: status
+        //     })
+        //     console.log(newData)
+        //     const newModel = await bookModel.create(newData)
+        //     res.send(newModel)
+        // }
+        // else {
+        //     res.send("Image is required")
+        // }
     } catch (error) {
         res.send({ message: error + "Spmething went wrong" })
 
@@ -73,27 +73,28 @@ router.delete('/:id', async (req, res) => {
 })
 
 
-router.patch("/:id", upload.single("image"), async (req, res) => {
+router.patch("/:id", async (req, res) => {
     try {
-        if (req.file) {
-            const { name, age, status } = req.body;
-            req.file.path = req.file.path.replace(`\\`, `/`);
-            const file = {
-                image: req.file.path,
-            };
-            const newData = {
-                name: name,
-                age: age,
-                image: file.image,
-                status: status
-            }
-            const newModel = await bookModel.findByIdAndUpdate(req.params.id, newData)
-            res.send(newModel)
-        }
-        else {
-            const book = await bookModel.findByIdAndUpdate(req.params.id, req.body)
-            res.send(book)
-        }
+        // if (req.file) {
+        //     const { name, age, status } = req.body;
+        //     req.file.path = req.file.path.replace(`\\`, `/`);
+        //     const file = {
+        //         image: req.file.path,
+        //     };
+        //     const newData = {
+        //         name: name,
+        //         age: age,
+        //         image: file.image,
+        //         status: status
+        //     }
+        //     const newModel = await bookModel.findByIdAndUpdate(req.params.id, newData)
+        //     res.send(newModel)
+        // }
+        // else {
+            // }
+            console.log("update",req.body)
+                const book = await bookModel.findByIdAndUpdate(req.params.id, req.body)
+                res.send(book)
     } catch (error) {
         res.status(500).send(error);
     }
